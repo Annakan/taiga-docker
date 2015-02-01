@@ -11,13 +11,14 @@ FROM ruby:2.1.2
 
 MAINTAINER Ivan Pedrazas <ivan@pedrazas.me>
 
-RUN apt-get update -y && apt-get install --no-install-recommends -y -q  nodejs npm
+RUN apt-get update -y && apt-get install --no-install-recommends -y -q  apt-utils nodejs nodejs-legacy npm
 
 
 
 RUN (gem install sass scss-lint)
 RUN (npm install -g gulp bower)
-RUN (ln -s /usr/bin/nodejs /usr/bin/node)
+# node-legacy package do this BETTER and avoid that install gulp fail because npm can't find nodejs renamed
+#RUN (ln -s /usr/bin/nodejs /usr/bin/node)
 
 RUN (cd / && git clone https://github.com/taigaio/taiga-front.git)
 
