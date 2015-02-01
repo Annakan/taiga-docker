@@ -5,11 +5,17 @@ RUN apt-get -qq update
 
 RUN apt-get install -y python-dev python-setuptools git-core locales
 
-RUN echo "LANG=en_US.UTF-8" > /etc/default/locale
-RUN echo "LC_MESSAGES=POSIX" >> /etc/default/locale
-RUN echo "LANGUAGE=en" >> /etc/default/locale
-RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
+# make the "en_US.UTF-8" locale for utf-8 to be enabled by default
+RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
+&& localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+ENV LANG en_US.utf8
+
+# this lines seems not to properly set the locale , it might not show on dockers run on a en_US.UTF-8 set host but does make the build fail on other hosts, the above locale setting method has been ripped from the postgres official docker container build and DOES work
+#RUN echo "LANG=en_US.UTF-8" > /etc/default/locale
+#RUN echo "LC_MESSAGES=POSIX" >> /etc/default/locale
+#RUN echo "LANGUAGE=en" >> /etc/default/locale
+#RUN locale-gen en_US.UTF-8
+#ENV LANG en_US.UTF-8
 
 RUN (echo hi)
 RUN (echo hi)
