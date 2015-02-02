@@ -3,9 +3,9 @@
 
 # setup-local is designed to NOT rely on any registry besides the base images
 # the reason is, well, docker naming scheme is awfull, convoluted and probably plainly wrong confusing many goals in one (naming, locating, ownership, versionning ...)
-# but mostly it prevent sane debugging and developement iteration and the dependency to the registry creep everywhere
-# setup-local tries to build image "locally" with only the base images pulled from a registry and a naming shame that does not compound people name into the mix.
-# you are free to tag the final images and upload them to any registry you want..
+# but mostly it prevents sane debugging and developement iteration and the dependency to the registry creep everywhere
+# setup-local tries to build image "locally" with only the base images pulled from a registry and a naming scheme that does not compound "people" names into the mix.
+# You are free to tag the final images and upload them to any registry you want..
 
 sudo mkdir -p /data/taiga/postgresql
 
