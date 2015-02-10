@@ -25,8 +25,8 @@ docker rm rabbitmq
 docker run -d -p 5672:5672 -p 15672:15672 -v /data/taiga/rabbitmq:/data/log -v /data/rabbitmq:/data/mnesia --name rabbitmq  dockerfile/rabbitmq
 
 # starting the redis container
-docker rm redis 
 docker stop redis 
+docker rm redis 
 docker run -d -p 6379:6379 -v /data/taiga/redis:/data --name redis dockerfile/redis
 
 
