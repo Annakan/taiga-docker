@@ -31,6 +31,7 @@ docker run -d -p 6379:6379 -v /data/taiga/redis:/data --name redis dockerfile/re
 
 
 # creating the back end container and linking to the postgres, redis and rabbitMQ container
+docker stop taiga-back 
 docker rm taiga-back 
 docker run -d --name taiga-back  -p 8001:8001  --link taiga-postgres:postgres i-taiga-back 
 
@@ -38,6 +39,7 @@ docker run -d --name taiga-back  -p 8001:8001  --link taiga-postgres:postgres i-
 
 docker run -it --rm -v /data/taiga:/taiga i-taiga-front-static-builder 
 
+docker stop taiga-front
 docker rm taiga-front 
 docker run -d --name taiga-front -p 80:80 -p 8000:8000 --link taiga-back:taiga-back i-taiga-front
 

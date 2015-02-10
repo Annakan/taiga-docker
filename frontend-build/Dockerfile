@@ -11,7 +11,13 @@ FROM ruby:2.1.2
 
 MAINTAINER Ivan Pedrazas <ivan@pedrazas.me>
 
-RUN apt-get update -y && apt-get install --no-install-recommends -y -q  apt-utils nodejs nodejs-legacy npm
+# More recent version of node and NPM than in the base repos
+RUN apt-get install -y build-essential
+# Docker special tricks with packages cause apt-get update to fail when used repeatdly
+# see https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=624122
+RUN rm -f /etc/apt/apt.conf.d/docker-*
+RUN apt-get update -y && curl -sL https://deb.nodesource.com/setup | bash -
+RUN apt-get update -y && apt-get install --no-install-recommends -y -q  nodejs 
 
 
 
