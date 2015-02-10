@@ -23,7 +23,8 @@ RUN (npm install -g gulp bower)
 RUN (cd / && git clone https://github.com/taigaio/taiga-front.git)
 
 #COPY main.coffee /taiga-front/app/config/main.coffee
-
+# Git port is not always open lets use https
+RUN git config --global url."https://".insteadOf git://
 RUN (cd /taiga-front && npm install)
 RUN (cd /taiga-front && bower install --allow-root)
 RUN (cd /taiga-front && gulp deploy)
