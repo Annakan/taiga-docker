@@ -7,6 +7,11 @@
 # setup-local tries to build image "locally" with only the base images pulled from a registry and a naming scheme that does not compound "people" names into the mix.
 # You are free to tag the final images and upload them to any registry you want..
 
+if [ -e "jq" ]
+ curl -O http://stedolan.github.io/jq/download/linux64/jq
+ chmod +x ./jq
+fi
+
 mkdir -p /data/taiga/postgresql
 
 docker build -t i-taiga-front frontend/. && /
