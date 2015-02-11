@@ -18,7 +18,7 @@ RUN apt-get install -y build-essential
 RUN rm -f /etc/apt/apt.conf.d/docker-*
 RUN apt-get update -y && curl -sL https://deb.nodesource.com/setup | bash -
 RUN apt-get update -y && apt-get install --no-install-recommends -y -q  nodejs 
-
+RUN npm install npm -g
 
 
 RUN (gem install sass scss-lint)
