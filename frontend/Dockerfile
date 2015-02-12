@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* 
 ENV LANG en_US.utf8
 
 ENV NGINX_VERSION 1.7.9-1~wheezy
-RUN apt-get update && apt-get install -y nginx=${NGINX_VERSION} 
+RUN apt-get update && apt-get install -y  ca-certificates nginx=${NGINX_VERSION} && rm -rf /var/lib/apt/lists/* 
 
 # forward request and error logs to docker log collector
 RUN ln -sf /dev/stdout /var/log/nginx/access.log
@@ -40,6 +40,6 @@ COPY taiga.conf /etc/nginx/conf.d/default.conf
 ENV PATH /usr/local/nginx/sbin:$PATH
 WORKDIR /usr/local/nginx/html
 
-EXPOSE 80 8000
+EXPOSE 80 443 8000
 
 CMD ["nginx", "-g", "daemon off;"]
