@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* 
 ENV LANG en_US.utf8
 
 ENV NGINX_VERSION 1.7.9-1~wheezy
-RUN apt-get update && apt-get install -y  ca-certificates nginx=${NGINX_VERSION} && rm -rf /var/lib/apt/lists/* 
+RUN apt-get update && apt-get install -y  ca-certificates nginx && rm -rf /var/lib/apt/lists/* 
 
 # forward request and error logs to docker log collector
 RUN ln -sf /dev/stdout /var/log/nginx/access.log
