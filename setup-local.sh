@@ -15,6 +15,7 @@ function stop_running {
     docker stop $cont_id;
     echo "Stopping  $cont_id"
     if [[ "$2" -eq "rm" ]]; then 
+      sleep 2
       docker rm $cont_id
       echo "removed $1 $cont_id"
     fi
@@ -32,11 +33,13 @@ if [ -e "jq" ]; then
  chmod +x ./jq
 fi
 
-if [[ "$1" -eq "fresh" ]]; then
-  rm  -rf $TAIGA_DATA_DIR
+if [ "$1" = "fresh" ]; then
+  sudo rm  -rf $TAIGA_DATA_DIR
   echo " ********************* removed $TAIGA_DATA_DIR data erased **************************** "
+  sleep 2
 fi
-mkdir -p $TAIGA_DATA_DIR
+
+sudo mkdir -p $TAIGA_DATA_DIR
  
 echo "****************************** building taiga ****************************************"
 docker build -t i-taiga-front frontend/. && /
