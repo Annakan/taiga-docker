@@ -79,7 +79,8 @@ USE_TZ = True
 
 SITES = {
     "api": {"domain": "taiga-back:8000", "scheme": "http", "name": "api"},
-    "front": {"domain": "taiga-front:9001", "scheme": "http", "name": "front"},
+#    "front": {"domain": "taiga-front:9001", "scheme": "http", "name": "front"},
+    "front": {"domain": "docker.assemblee-nationale.fr:9001", "scheme": "http", "name": "front"},
 }
 
 SITE_ID = "api"
@@ -108,12 +109,15 @@ MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 # The absolute url is mandatory because attachments
 # urls depends on it. On production should be set
 # something like https://media.taiga.io/
-MEDIA_URL = "http://taiga-front/media/"
+#MEDIA_URL = "http://taiga-front/media/"
+MEDIA_URL = "http://docker.assemblee-nationale.fr/media/"
 
 # Static url is not widelly used by taiga (only
 # if admin is activated).
-STATIC_URL = "http://taiga-front/static/"
-ADMIN_MEDIA_PREFIX = "http://taiga-front/static/admin/"
+STATIC_URL = "http://docker.assemblee-nationale.fr/static/"
+#STATIC_URL = "http://taiga-front/static/"
+#ADMIN_MEDIA_PREFIX = "http://taiga-front/static/admin/"
+ADMIN_MEDIA_PREFIX = "http://docker.assemblee-nationale.fr/static/admin/"
 
 # Static configuration.
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -247,7 +251,15 @@ LOGGING = {
             "level": "ERROR",
             "filters": ["require_debug_false"],
             "class": "django.utils.log.AdminEmailHandler",
-        }
+        },
+        "logfile" : {
+            'level' : "INFO",
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': "/logs/logfile.log",
+            'maxBytes': 500000,
+            'backupCount': 2,
+            'formatter': 'complete',
+        },
     },
     "loggers": {
         "django": {
@@ -256,12 +268,12 @@ LOGGING = {
             "level": "INFO",
         },
         "django.request": {
-            "handlers": ["mail_admins", "console"],
+            "handlers": ["mail_admins", "console", "logfile"],
             "level": "ERROR",
             "propagate": False,
         },
         "taiga": {
-            "handlers": ["console"],
+            "handlers": ["console","logfile"],
             "level": "DEBUG",
             "propagate": False,
         }

@@ -19,6 +19,7 @@ ENV LANG en_US.utf8
 
 RUN (echo hi)
 RUN (echo hi)
+RUN mkdir -p /logs/ && touch /logs/logfile.log 
 RUN (cd / && git clone https://github.com/taigaio/taiga-back.git taiga)
 
 # docker needs to define the host database, use this file for
@@ -31,7 +32,6 @@ RUN (rm /tmp/docker-settings.py)
 RUN (echo "alias ll='ls -atrhlF'" >> ~/.bashrc)
 
 RUN (cd /taiga && python manage.py collectstatic --noinput)
-
 
 VOLUME ["/logs"]
 

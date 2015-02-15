@@ -42,7 +42,7 @@ fi
 sudo mkdir -p $TAIGA_DATA_DIR
  
 echo "****************************** building taiga ****************************************"
-docker build -t i-taiga-front frontend/. && /
+#docker build -t i-taiga-front frontend/. && /
 docker build -t i-taiga-back backend/. && /
 docker build -t i-taiga-front-static-builder frontend-build/.
 echo "****************************** END building taiga ****************************************"
@@ -78,6 +78,7 @@ echo "*************** initializing the static datas of the front end web contain
 docker run -it --rm -v /data/taiga:/taiga i-taiga-front-static-builder 
 
 stop_running taiga-front rm
+cd ./frontend/ && source build.sh || cd ..
 docker run -d --name taiga-front -p 80:80 -p 8000:8000 --link taiga-back:taiga-back i-taiga-front
 
 echo "******************************************** regenerate datas ********************************************* "

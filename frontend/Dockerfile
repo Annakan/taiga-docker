@@ -26,14 +26,14 @@ RUN apt-get update && apt-get install -y  ca-certificates nginx && rm -rf /var/l
 RUN ln -sf /dev/stdout /var/log/nginx/access.log
 RUN ln -sf /dev/stderr /var/log/nginx/error.log
 
-VOLUME ["/usr/share/nginx/html"]
-VOLUME ["/etc/nginx"]
+#VOLUME ["/usr/share/nginx/html"]
+#VOLUME ["/etc/nginx"]
 VOLUME ["/var/log/nginx"]
 
 RUN echo "alias ll='ls -atrhlF'" >> ~/.bashrc
 
-#COPY build/taiga/dist /usr/local/nginx/html
-#COPY build/taiga/static /usr/local/nginx/html
+COPY build/dist /usr/local/nginx/html
+COPY build/static /usr/local/nginx/html
 #COPY nginx.conf /etc/nginx/nginx.conf
 COPY taiga.conf /etc/nginx/conf.d/default.conf
 
