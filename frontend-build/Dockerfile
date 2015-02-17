@@ -20,7 +20,7 @@ RUN apt-get update -y && curl -sL https://deb.nodesource.com/setup | bash -
 RUN apt-get update -y && apt-get install --no-install-recommends -y -q  nodejs 
 RUN npm install npm -g
 
-ENV hostname="/docker.assemblee-nationale.fr"
+#ENV hostname="docker.assemblee-nationale.fr"
 
 RUN (gem install sass scss-lint)
 RUN (npm install -g gulp bower)
