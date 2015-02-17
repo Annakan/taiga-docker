@@ -30,3 +30,18 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 #GITHUB_API_CLIENT_SECRET = "yourgithubclientsecret"
 
 
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "taiga",
+        "HOST": "postgres",
+        "USER": "taiga",
+        "PASSWORD": "thisisthetaigapassword",
+    }
+}
+
+
+SECRET_KEY = "!@akljfREdsjfhuladsjkfalu535363"
+
+
