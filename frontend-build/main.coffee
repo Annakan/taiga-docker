@@ -1,6 +1,8 @@
 config = {
-    host: "${hostname}"
-    scheme: "${scheme}"
+#    host: "${hostname}"
+    host: "docker.assemblee-nationale.fr"
+#    scheme: "${scheme}"
+    scheme: "http"
 
     debug: true
 
