@@ -1,7 +1,7 @@
 #! /bin/bash
 
 TAIGA_DATA_DIR="/data/taiga/postgresql"
-
+DNSNAME="docker\.assemblee-nationale\.fr"
 
 function find_running {
   for i in $(docker ps -a | grep "$1" | cut -f1 -d" "); do echo $i; done
@@ -80,6 +80,9 @@ docker run -it --rm -v /data/taiga:/taiga i-taiga-front-static-builder
 stop_running taiga-front rm
 cd ./frontend/ && source build.sh || cd ..
 docker run -d --name taiga-front -p 80:80 -p 8000:8000 --link taiga-back:taiga-back i-taiga-front
+docker exec taiga-front sh -c "cd /usr/local/nginx/html/js; sed s/localhost/$DNSNAME/g <app.js>app2.js; mv app2.js app.js"
+docker exec taiga-front sh -c "cd /usr/local/nginx/html/js; sed -i.old  s/localhost/$DNSNAME/g libs.js"
+docker exec taiga-front sh -c "cd /usr/local/nginx/html/js; sed -i.old  s/localhost/$DNSNAME/g app-loader.js"
 
 echo "******************************************** regenerate datas ********************************************* "
 docker run -it --rm --link taiga-postgres:postgres i-taiga-back bash regenerate.sh
