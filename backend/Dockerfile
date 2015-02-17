@@ -8,7 +8,7 @@ RUN apt-get install -y python-dev python-setuptools git-core locales
 RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
 && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 ENV LANG en_US.utf8
-ENV PUBNAME docker.assemblee-nationale.fr
+ENV SERVER_NAME docker.assemblee-nationale.fr
 
 
 # this lines seems not to properly set the locale , it might not show on dockers run on a en_US.UTF-8 set host but does make the build fail on other hosts, the above locale setting method has been ripped from the postgres official docker container build and DOES work
@@ -29,11 +29,9 @@ RUN (pip install -r /taiga/requirements.txt)
 COPY docker-settings.py /tmp/docker-settings.py
 RUN (cd /taiga && cat /tmp/docker-settings.py >> settings/local.py)
 RUN (rm /tmp/docker-settings.py)
-RUN sed -i.old  s/example/$PUBNAME/g /taiga/settings/local.py 
-RUN sed -i.old  s/example/$PUBNAME/g /taiga/settings/common.py 
-#RUN sed -i.old  s/localhost/docker\.assemblee-nationale\.fr/g /taiga/settings/common.py 
-RUN sed -i.old  s/example/$PUBNAME/g /taiga/taiga/base/utils/urls.py 
-#RUN sed -i.old  s/localhost/docker\.assemblee-nationale\.fr/g /taiga/taiga/base/utils/urls.py 
+RUN sed -i.old  s/example/$SERVER_NAME/g /taiga/settings/local.py 
+RUN sed -i.old  s/example/$SERVER_NAME/g /taiga/settings/common.py 
+RUN sed -i.old  s/example/$SERVER_NAME/g /taiga/taiga/base/utils/urls.py 
 
 
 RUN (echo "alias ll='ls -atrhlF'" >> ~/.bashrc)

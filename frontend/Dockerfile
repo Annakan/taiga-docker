@@ -10,7 +10,6 @@ FROM debian:wheezy
 
 MAINTAINER NGINX Docker Maintainers "docker-maint@nginx.com"
 
-#RUN apt-key adv --keyserver pgp.mit.edu --recv-keys 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
 RUN apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
 RUN echo "deb http://nginx.org/packages/mainline/debian/ wheezy nginx" >> /etc/apt/sources.list
 
@@ -18,6 +17,9 @@ RUN echo "deb http://nginx.org/packages/mainline/debian/ wheezy nginx" >> /etc/a
 RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
 && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 ENV LANG en_US.utf8
+
+
+ENV SERVER_NAME docker.assemblee-nationale.fr
 
 ENV NGINX_VERSION 1.7.9-1~wheezy
 RUN apt-get update && apt-get install -y  ca-certificates nginx && rm -rf /var/lib/apt/lists/* 
@@ -34,9 +36,8 @@ RUN echo "alias ll='ls -atrhlF'" >> ~/.bashrc
 
 COPY build/dist /usr/local/nginx/html
 COPY build/static /usr/local/nginx/html
-#COPY nginx.conf /etc/nginx/nginx.conf
 COPY taiga.conf /etc/nginx/conf.d/default.conf
-
+RUN sed -i.orig  s/TO_REPLACE/$SERVER_NAME/g /etc/nginx/conf.d/default.conf 
 ENV PATH /usr/local/nginx/sbin:$PATH
 WORKDIR /usr/local/nginx/html
 

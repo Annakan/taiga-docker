@@ -20,7 +20,8 @@ RUN apt-get update -y && curl -sL https://deb.nodesource.com/setup | bash -
 RUN apt-get update -y && apt-get install --no-install-recommends -y -q  nodejs 
 RUN npm install npm -g
 
-#ENV hostname="docker.assemblee-nationale.fr"
+ENV SERVER_NAME="docker.assemblee-nationale.fr"
+ENV URL_SCHEME="http"
 
 RUN (gem install sass scss-lint)
 RUN (npm install -g gulp bower)
@@ -30,6 +31,8 @@ RUN (npm install -g gulp bower)
 RUN (cd / && git clone https://github.com/taigaio/taiga-front.git)
 
 #COPY main.coffee /taiga-front/app/config/main.coffee
+RUN sed -i.orig s/${hostname}/$SERVER_NAME/g /taiga-front/app/config/main.coffee
+RUN sed -i.orig s/${scheme}/$URL_SCHEME/g /taiga-front/app/config/main.coffee
 # Git port is not always open lets use https
 RUN git config --global url."https://".insteadOf git://
 RUN (cd /taiga-front && npm install)
