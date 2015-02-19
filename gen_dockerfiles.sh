@@ -3,12 +3,13 @@
 TAIGA_DATA_DIR="/data/taiga/"
 TAIGA_BD_DIR="$TAIGA_DATA_DIR/postgresql"
 
-#SERVER_NAME="docker.assemblee-nationale.fr"
 SERVER_NAME=${TAIGA_SERVER_NAME:=localhost}
 URL_SCHEME=${TAIGA_URL_SCHEME:=http}
-#URL_SCHEME="http"
+VN_SERVER_NAME='$SERVER_NAME'
+VN_PATH='$PATH'
+VN_URL_SCHEME='$URL_SCHEME'
 
-cat << EOFDOCK > /frontend/Dockerfile
+cat << EOFDOCK > frontend/Dockerfile
 ##############################################################
 ##
 ##
@@ -49,8 +50,8 @@ RUN echo "alias ll='ls -atrhlF'" >> ~/.bashrc
 COPY build/dist /usr/local/nginx/html
 COPY build/static /usr/local/nginx/html
 COPY taiga.conf /etc/nginx/conf.d/default.conf
-RUN sed -i.orig  s/TO_REPLACE/$SERVER_NAME/g /etc/nginx/conf.d/default.conf
-ENV PATH /usr/local/nginx/sbin:$PATH
+RUN sed -i.orig  s/TO_REPLACE/$VN_SERVER_NAME/g /etc/nginx/conf.d/default.conf
+ENV PATH /usr/local/nginx/sbin:$VN_PATH
 WORKDIR /usr/local/nginx/html
 
 EXPOSE 80 443 8000
@@ -59,7 +60,7 @@ CMD ["nginx", "-g", "daemon off;"]
 EOFDOCK
 
 
-cat << EOFDOCK > /frontend-build/Dockerfile
+cat << EOFDOCK > frontend-build/Dockerfile
 ##############################################################
 ##
 ##
@@ -93,8 +94,8 @@ RUN (npm install -g gulp bower)
 RUN (cd / && git clone https://github.com/taigaio/taiga-front.git)
 
 #COPY main.coffee /taiga-front/app/config/main.coffee
-RUN sed -i.orig s/${hostname}/$SERVER_NAME/g /taiga-front/app/config/main.coffee
-RUN sed -i.orig s/${scheme}/$URL_SCHEME/g /taiga-front/app/config/main.coffee
+RUN sed -i.orig s/${hostname}/$VN_SERVER_NAME/g /taiga-front/app/config/main.coffee
+RUN sed -i.orig s/${scheme}/$VN_URL_SCHEME/g /taiga-front/app/config/main.coffee
 # Git port is not always open lets use https
 RUN git config --global url."https://".insteadOf git://
 RUN (cd /taiga-front && npm install)
@@ -109,7 +110,7 @@ CMD mv /taiga-front/dist /taiga
 EOFDOCK
 
 
-cat << EOFDOCK > /backend/Dockerfile
+cat << EOFDOCK > backend/Dockerfile
 FROM python:3
 MAINTAINER Ivan Pedrazas "ipedrazas@gmail.com"
 RUN apt-get -qq update
@@ -141,9 +142,9 @@ RUN (pip install -r /taiga/requirements.txt)
 COPY docker-settings.py /tmp/docker-settings.py
 RUN (cd /taiga && cat /tmp/docker-settings.py >> settings/local.py)
 RUN (rm /tmp/docker-settings.py)
-RUN sed -i.old  s/example/$SERVER_NAME/g /taiga/settings/local.py
-RUN sed -i.old  s/example/$SERVER_NAME/g /taiga/settings/common.py
-RUN sed -i.old  s/example/$SERVER_NAME/g /taiga/taiga/base/utils/urls.py
+RUN sed -i.old  s/example/$VN_SERVER_NAME/g /taiga/settings/local.py
+RUN sed -i.old  s/example/$VN_SERVER_NAME/g /taiga/settings/common.py
+RUN sed -i.old  s/example/$VN_SERVER_NAME/g /taiga/taiga/base/utils/urls.py
 
 
 RUN (echo "alias ll='ls -atrhlF'" >> ~/.bashrc)
