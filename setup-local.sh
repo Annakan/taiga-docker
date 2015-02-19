@@ -1,7 +1,10 @@
 #! /bin/bash
 
-TAIGA_DATA_DIR="/data/taiga/postgresql"
-SERVER_NAME="docker.assemblee-nationale.fr"
+
+TAIGA_DATA_DIR="/data/taiga/"
+TAIGA_BD_DIR="$TAIGA_DATA_DIR/postgresql"
+
+source gen_dockerfiles.sh
 
 function find_running {
   for i in $(docker ps -a | grep "$1" | cut -f1 -d" "); do echo $i; done
@@ -39,7 +42,7 @@ if [ "$1" = "fresh" ]; then
   sleep 2
 fi
 
-sudo mkdir -p $TAIGA_DATA_DIR
+sudo mkdir -p $TAIGA_BD_DIR
  
 echo "****************************** building taiga ****************************************"
 #docker build -t i-taiga-front frontend/. && /
@@ -51,7 +54,7 @@ echo "****************************** END building taiga ************************
 echo "********************************** creating the DB container ********************************************* "
 stop_running  taiga-postgres rm
 docker build -t i-fixedperm-postgres fixedperm-postgres/.
-docker run -d --name taiga-postgres  -p 5432:5432  -v /data/taiga/postgresql:/var/lib/postgresql/data i-fixedperm-postgres 
+docker run -d --name taiga-postgres  -p 5432:5432  -v $TAIGA_BD_DIR:/var/lib/postgresql/data i-fixedperm-postgres 
 sleep 5 
 docker run -it --link taiga-postgres:postgres --rm -e "SERVER_NAME=$SERVER_NAME" i-fixedperm-postgres sh -c "su postgres --command 'createuser -h "'$POSTGRES_PORT_5432_TCP_ADDR'" -p "'$POSTGRES_PORT_5432_TCP_PORT'" -d -r -s taiga'"
 docker run -it --link taiga-postgres:postgres --rm -e "SERVER_NAME=$SERVER_NAME" i-fixedperm-postgres sh -c "su postgres --command 'createdb -h "'$POSTGRES_PORT_5432_TCP_ADDR'" -p "'$POSTGRES_PORT_5432_TCP_PORT'" -O taiga taiga'";

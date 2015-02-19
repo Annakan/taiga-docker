@@ -10,6 +10,8 @@ FROM debian:wheezy
 
 MAINTAINER NGINX Docker Maintainers "docker-maint@nginx.com"
 
+ENV SERVER_NAME docker.assemblee-nationale.fr
+
 RUN apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
 RUN echo "deb http://nginx.org/packages/mainline/debian/ wheezy nginx" >> /etc/apt/sources.list
 
@@ -19,7 +21,6 @@ RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* 
 ENV LANG en_US.utf8
 
 
-ENV SERVER_NAME docker.assemblee-nationale.fr
 
 ENV NGINX_VERSION 1.7.9-1~wheezy
 RUN apt-get update && apt-get install -y  ca-certificates nginx && rm -rf /var/lib/apt/lists/* 
