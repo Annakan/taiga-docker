@@ -45,8 +45,11 @@ fi
 sudo mkdir -p $TAIGA_BD_DIR
  
 echo "****************************** building taiga ****************************************"
-#docker build -t i-taiga-front frontend/. && 
+echo ---------------------- building front-end image ------------------------------------------
+docker build -t i-taiga-front frontend/. && 
+echo ---------------------- building back end image ------------------------------------------
 docker build -t i-taiga-back backend/.  
+echo ---------------- building front-end BUILDER  image --------------------------------------
 docker build -t i-taiga-front-static-builder frontend-build/.
 echo "****************************** END building taiga ****************************************"
 
@@ -55,6 +58,7 @@ echo "********************************** creating the DB container *************
 stop_running  taiga-postgres rm
 docker build -t i-fixedperm-postgres fixedperm-postgres/.
 docker run -d --name taiga-postgres  -p 5432:5432  -v $TAIGA_BD_DIR:/var/lib/postgresql/data i-fixedperm-postgres 
+#takes time to postgres to warm up and accept connection so ...
 sleep 5 
 docker run -it --link taiga-postgres:postgres --rm -e "SERVER_NAME=$SERVER_NAME" i-fixedperm-postgres sh -c "su postgres --command 'createuser -h "'$POSTGRES_PORT_5432_TCP_ADDR'" -p "'$POSTGRES_PORT_5432_TCP_PORT'" -d -r -s taiga'"
 docker run -it --link taiga-postgres:postgres --rm -e "SERVER_NAME=$SERVER_NAME" i-fixedperm-postgres sh -c "su postgres --command 'createdb -h "'$POSTGRES_PORT_5432_TCP_ADDR'" -p "'$POSTGRES_PORT_5432_TCP_PORT'" -O taiga taiga'";
