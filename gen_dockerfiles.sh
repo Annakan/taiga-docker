@@ -8,6 +8,10 @@ URL_SCHEME=${TAIGA_URL_SCHEME:=http}
 VN_SERVER_NAME='$SERVER_NAME'
 VN_PATH='$PATH'
 VN_URL_SCHEME='$URL_SCHEME'
+VN_HOSTNAME='${hostname}'
+VN_SCHEME='${scheme}'
+
+
 
 cat << EOFDOCK > frontend/Dockerfile
 ##############################################################
@@ -94,8 +98,9 @@ RUN (npm install -g gulp bower)
 RUN (cd / && git clone https://github.com/taigaio/taiga-front.git)
 
 #COPY main.coffee /taiga-front/app/config/main.coffee
-RUN sed -i.orig s/${hostname}/$VN_SERVER_NAME/g /taiga-front/app/config/main.coffee
-RUN sed -i.orig s/${scheme}/$VN_URL_SCHEME/g /taiga-front/app/config/main.coffee
+# main.coffee seams to have disapeared in recent taiga builds
+#RUN sed -i.orig s/$VN_HOSTNAME/$VN_SERVER_NAME/g /taiga-front/app/config/main.coffee
+#RUN sed -i.orig s/$VN_SCHEME/$VN_URL_SCHEME/g /taiga-front/app/config/main.coffee
 # Git port is not always open lets use https
 RUN git config --global url."https://".insteadOf git://
 RUN (cd /taiga-front && npm install)

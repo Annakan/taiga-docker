@@ -1,8 +1,8 @@
 #! /bin/bash
 
 
-TAIGA_DATA_DIR="/data/taiga/"
-TAIGA_BD_DIR="$TAIGA_DATA_DIR/postgresql"
+#TAIGA_DATA_DIR="/data/taiga/"
+#TAIGA_BD_DIR="$TAIGA_DATA_DIR/postgresql"
 
 source gen_dockerfiles.sh
 
@@ -31,10 +31,10 @@ function stop_running {
 # setup-local tries to build image "locally" with only the base images pulled from a registry and a naming scheme that does not compound "people" names into the mix.
 # You are free to tag the final images and upload them to any registry you want..
 
-if [ -e "jq" ]; then
- curl -O http://stedolan.github.io/jq/download/linux64/jq
- chmod +x ./jq
-fi
+#if [ -e "jq" ]; then
+# curl -O http://stedolan.github.io/jq/download/linux64/jq
+# chmod +x ./jq
+#fi
 
 if [ "$1" = "fresh" ]; then
   sudo rm  -rf $TAIGA_DATA_DIR
@@ -45,8 +45,8 @@ fi
 sudo mkdir -p $TAIGA_BD_DIR
  
 echo "****************************** building taiga ****************************************"
-#docker build -t i-taiga-front frontend/. && /
-docker build -t i-taiga-back backend/. && /
+#docker build -t i-taiga-front frontend/. && 
+docker build -t i-taiga-back backend/.  
 docker build -t i-taiga-front-static-builder frontend-build/.
 echo "****************************** END building taiga ****************************************"
 
