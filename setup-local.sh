@@ -45,11 +45,12 @@ fi
 sudo mkdir -p $TAIGA_BD_DIR
  
 echo "****************************** building taiga ****************************************"
-echo ---------------------- building front-end image ------------------------------------------
-docker build -t i-taiga-front frontend/. && 
+#echo ---------------------- building front-end image ------------------------------------------
+#docker build -t i-taiga-front frontend/. && 
 echo ---------------------- building back end image ------------------------------------------
 docker build -t i-taiga-back backend/.  
 echo ---------------- building front-end BUILDER  image --------------------------------------
+docker rmi i-taiga-front-static-builder
 docker build -t i-taiga-front-static-builder frontend-build/.
 echo "****************************** END building taiga ****************************************"
 
@@ -58,7 +59,7 @@ echo "********************************** creating the DB container *************
 stop_running  taiga-postgres rm
 docker build -t i-fixedperm-postgres fixedperm-postgres/.
 docker run -d --name taiga-postgres  -p 5432:5432  -v $TAIGA_BD_DIR:/var/lib/postgresql/data i-fixedperm-postgres 
-#takes time to postgres to warm up and accept connection so ...
+#takes time to postgres to warm up and accept connections so ...
 sleep 5 
 docker run -it --link taiga-postgres:postgres --rm -e "SERVER_NAME=$SERVER_NAME" i-fixedperm-postgres sh -c "su postgres --command 'createuser -h "'$POSTGRES_PORT_5432_TCP_ADDR'" -p "'$POSTGRES_PORT_5432_TCP_PORT'" -d -r -s taiga'"
 docker run -it --link taiga-postgres:postgres --rm -e "SERVER_NAME=$SERVER_NAME" i-fixedperm-postgres sh -c "su postgres --command 'createdb -h "'$POSTGRES_PORT_5432_TCP_ADDR'" -p "'$POSTGRES_PORT_5432_TCP_PORT'" -O taiga taiga'";
@@ -67,7 +68,7 @@ echo "********************************** END creating the DB container *********
 
 # starting the RabbitMQ container
 stop_running rabbitmq rm
-docker run -d -p 5672:5672 -p 15672:15672 -v /data/taiga/rabbitmq:/data/log -v /data/rabbitmq:/data/mnesia --name rabbitmq  dockerfile/rabbitmq
+docker run -d -p 5672:5672 -p 15672:15672 -v /data/taiga/rabbitmq:/data/log -v /data/taiga/rabbitmq:/data/mnesia --name rabbitmq  dockerfile/rabbitmq
 
 # starting the redis container
 stop_running redis rm
@@ -83,9 +84,19 @@ docker run -d  -e "SERVER_NAME=$SERVER_NAME" --name taiga-back  -p 8001:8001  --
 echo "*************** initializing the static datas of the front end web container *************************** "
 
 docker run -it --rm  -e "SERVER_NAME=$SERVER_NAME" -v /data/taiga:/taiga i-taiga-front-static-builder 
+docker run -it --rm  -v /data/taiga:/static i-taiga-back sh -c 'cp -r /taiga/static /static/
 
+rm -rf frontend/build
+mkdir frontend/build
+cp -r /data/taiga/dist frontend/build
+cp -r /data/taiga/static frontend/build
+echo ---------------------- Building frontend image -------------------------------------------
+echo --------------- with static datas from frontend-builder-----------------------------------
 stop_running taiga-front rm
-cd ./frontend/ && source build.sh || cd ..
+docker build -t i-taiga-front frontend/.
+#rm -rf frontend/build
+
+
 docker run -d  -e "SERVER_NAME=$SERVER_NAME" --name taiga-front -p 80:80 -p 8000:8000 --link taiga-back:taiga-back i-taiga-front
 #docker exec taiga-front sh -c "cd /usr/local/nginx/html/js; sed s/localhost/$URL/g <app.js>app2.js; mv app2.js app.js"
 #docker exec taiga-front sh -c "cd /usr/local/nginx/html/js; sed -i.old  s/localhost/$URL/g libs.js"

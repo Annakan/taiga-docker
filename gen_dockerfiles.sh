@@ -87,11 +87,14 @@ RUN apt-get update -y && curl -sL https://deb.nodesource.com/setup | bash -
 RUN apt-get update -y && apt-get install --no-install-recommends -y -q  nodejs
 RUN npm install npm -g
 
+# because of exeSync bug explained here https://github.com/mgutz/execSync/issues/27 
+#RUN apt-get install python2
+#RUN npm config set python /usr/bin/python2.7  
+
 ENV SERVER_NAME=$SERVER_NAME
 ENV URL_SCHEME=$URL_SCHEME
 
 RUN (gem install sass scss-lint)
-RUN (npm install -g gulp bower)
 # node-legacy package do this BETTER and avoid that install gulp fail because npm can't find nodejs renamed
 #RUN (ln -s /usr/bin/nodejs /usr/bin/node)
 
@@ -103,7 +106,11 @@ RUN (cd / && git clone https://github.com/taigaio/taiga-front.git)
 #RUN sed -i.orig s/$VN_SCHEME/$VN_URL_SCHEME/g /taiga-front/app/config/main.coffee
 # Git port is not always open lets use https
 RUN git config --global url."https://".insteadOf git://
+#RUN (cd /taiga-front && npm install)
+RUN sleep 5
+RUN (cd /taiga-front && npm install gulp)
 RUN (cd /taiga-front && npm install)
+RUN echo "install done"
 RUN (cd /taiga-front && bower install --allow-root)
 RUN (cd /taiga-front && gulp deploy)
 

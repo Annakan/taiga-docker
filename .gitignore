@@ -1,5 +1,5 @@
-jq
 backend/Dockerfile
 frontend-build/Dockerfile
 frontend/Dockerfile
+frontend/build
 
