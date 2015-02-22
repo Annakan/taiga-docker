@@ -91,12 +91,11 @@ RUN npm install npm -g
 #RUN apt-get install python2
 #RUN npm config set python /usr/bin/python2.7  
 
-ENV SERVER_NAME=$SERVER_NAME
-ENV URL_SCHEME=$URL_SCHEME
+ENV SERVER_NAME $SERVER_NAME
+ENV URL_SCHEME $URL_SCHEME
 
 RUN (gem install sass scss-lint)
-# node-legacy package do this BETTER and avoid that install gulp fail because npm can't find nodejs renamed
-#RUN (ln -s /usr/bin/nodejs /usr/bin/node)
+RUN (npm install -g gulp bower)
 
 RUN (cd / && git clone https://github.com/taigaio/taiga-front.git)
 
@@ -104,13 +103,16 @@ RUN (cd / && git clone https://github.com/taigaio/taiga-front.git)
 # main.coffee seams to have disapeared in recent taiga builds
 #RUN sed -i.orig s/$VN_HOSTNAME/$VN_SERVER_NAME/g /taiga-front/app/config/main.coffee
 #RUN sed -i.orig s/$VN_SCHEME/$VN_URL_SCHEME/g /taiga-front/app/config/main.coffee
+
+
 # Git port is not always open lets use https
 RUN git config --global url."https://".insteadOf git://
-#RUN (cd /taiga-front && npm install)
-RUN sleep 5
-RUN (cd /taiga-front && npm install gulp)
-RUN (cd /taiga-front && npm install)
-RUN echo "install done"
+
+#ENV npm_config_engine-strict=true
+RUN sleep 2
+RUN (cd /taiga-front && npm -g install)
+RUN (cd /taiga-front && npm install )
+RUN echo " NPM install done"
 RUN (cd /taiga-front && bower install --allow-root)
 RUN (cd /taiga-front && gulp deploy)
 

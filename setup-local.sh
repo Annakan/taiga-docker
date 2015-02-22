@@ -51,7 +51,7 @@ echo ---------------------- building back end image ----------------------------
 docker build -t i-taiga-back backend/.  
 echo ---------------- building front-end BUILDER  image --------------------------------------
 docker rmi i-taiga-front-static-builder
-docker build -t i-taiga-front-static-builder frontend-build/.
+docker build --no-cache=true -t i-taiga-front-static-builder frontend-build/.
 echo "****************************** END building taiga ****************************************"
 
 # creating the DB container
