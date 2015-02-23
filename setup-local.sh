@@ -51,7 +51,7 @@ echo ---------------------- building back end image ----------------------------
 docker build -t i-taiga-back backend/.  
 echo ---------------- building front-end BUILDER  image --------------------------------------
 docker rmi i-taiga-front-static-builder
-docker build --no-cache=true -t i-taiga-front-static-builder frontend-build/.
+docker build -t i-taiga-front-static-builder frontend-build/.
 echo "****************************** END building taiga ****************************************"
 
 # creating the DB container
@@ -84,7 +84,7 @@ docker run -d  -e "SERVER_NAME=$SERVER_NAME" --name taiga-back  -p 8001:8001  --
 echo "*************** initializing the static datas of the front end web container *************************** "
 
 docker run -it --rm  -e "SERVER_NAME=$SERVER_NAME" -v /data/taiga:/taiga i-taiga-front-static-builder 
-docker run -it --rm  -v /data/taiga:/static i-taiga-back sh -c 'cp -r /taiga/static /static/
+docker run -it --rm  -v /data/taiga:/static i-taiga-back sh -c 'cp -r /taiga/static /static/'
 
 rm -rf frontend/build
 mkdir frontend/build
@@ -98,9 +98,9 @@ docker build -t i-taiga-front frontend/.
 
 
 docker run -d  -e "SERVER_NAME=$SERVER_NAME" --name taiga-front -p 80:80 -p 8000:8000 --link taiga-back:taiga-back i-taiga-front
-#docker exec taiga-front sh -c "cd /usr/local/nginx/html/js; sed s/localhost/$URL/g <app.js>app2.js; mv app2.js app.js"
-#docker exec taiga-front sh -c "cd /usr/local/nginx/html/js; sed -i.old  s/localhost/$URL/g libs.js"
-#docker exec taiga-front sh -c "cd /usr/local/nginx/html/js; sed -i.old  s/localhost/$URL/g app-loader.js"
+docker exec taiga-front sh -c "cd /usr/local/nginx/html/js; sed s/localhost/$SERVER_NAME/g <app.js>app2.js; mv app2.js app.js"
+docker exec taiga-front sh -c "cd /usr/local/nginx/html/js; sed -i.old  s/localhost/$SERVER_NAME/g libs.js"
+docker exec taiga-front sh -c "cd /usr/local/nginx/html/js; sed -i.old  s/localhost/$SERVER_NAME/g app-loader.js"
 
 echo "******************************************** regenerate datas ********************************************* "
 docker run -it --rm --link taiga-postgres:postgres i-taiga-back bash regenerate.sh
